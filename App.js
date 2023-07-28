@@ -3,6 +3,7 @@ import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {
+  CharacterProfile,
   Home,
   Login,
   Profile,
@@ -26,6 +27,7 @@ export default function App() {
           <Stack.Screen name="Signup" component={Signup} />
           <Stack.Screen name="TestLib" component={TestLib} />
           <Stack.Screen name="RickandMorty" component={RickandMorty} />
+          <Stack.Screen name="CharacterProfile" component={CharacterProfile} />
         </Stack.Navigator>
       </NavigationContainer>
     </>

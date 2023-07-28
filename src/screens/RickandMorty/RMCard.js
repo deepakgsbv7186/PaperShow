@@ -2,11 +2,14 @@ import {Image, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import React, {useState} from 'react';
 import {COLORS, FONTS, SIZES} from '../../constants';
 import Clipboard from '@react-native-clipboard/clipboard';
+import {useNavigation} from '@react-navigation/native';
+import CharacterProfile from './CharacterProfile';
 
 export default function RMCard({character}) {
-  const {name, status, species, location, image} = character;
+  const pointsTo = useNavigation();
+  const {name, status, species, location, image, charURL} = character;
   const copyToClipboard = () => {
-    Clipboard.setString(name);
+    Clipboard.setString(charURL);
   };
 
   return (
@@ -22,7 +25,7 @@ export default function RMCard({character}) {
               : COLORS.red,
         },
       ]}
-      onPress={() => console.log(name)}>
+      onPress={() => pointsTo.navigate('CharacterProfile', character)}>
       <Image
         source={{uri: image}}
         resizeMode="contain"
@@ -90,7 +93,7 @@ const styles = StyleSheet.create({
     width: SIZES.RW(60),
   },
   infoTitle: {
-    marginTop: SIZES.padding2,
+    marginTop: SIZES.padding,
   },
   title: {
     color: COLORS.black,

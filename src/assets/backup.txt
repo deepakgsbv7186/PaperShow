@@ -1,17 +1,17 @@
+// Count:1 RickandMory.js
 import {FlatList, StyleSheet, Text, View} from 'react-native';
-import React, {useEffect, useState, useCallback} from 'react';
+import React, {useEffect, useState} from 'react';
 import RMCard from './RMCard';
 import {COLORS, FONTS, SIZES} from '../../constants';
 import axios from 'axios';
 import VectorIcon from '../../helper/VectorIcon';
 
-const RickandMorty = () => {
+export default function RickandMorty() {
   const startEpisodeNumber = 1;
   const endEpisodeNumber = 50;
   const [charactersData, setCharactersData] = useState({});
   const [episodeInfo, setEpisodeInfo] = useState({});
   const [activeEpisode, setActiveEpisode] = useState(1);
-
   useEffect(() => {
     const getEpisodeInfo = async () => {
       try {
@@ -19,9 +19,7 @@ const RickandMorty = () => {
         const episodeAPI = await axios.get(URL);
         const episodeDetails = episodeAPI?.data;
         setEpisodeInfo(episodeDetails);
-        if (!charactersData[activeEpisode]) {
-          getRickandMortyCharacters(episodeDetails?.characters);
-        }
+        getRickandMortyCharacters(episodeDetails?.characters);
       } catch (error) {
         console.log('Episode:', error);
       }
@@ -29,50 +27,31 @@ const RickandMorty = () => {
     getEpisodeInfo();
   }, [activeEpisode]);
 
-  const getRickandMortyCharacters = useCallback(
-    async charactersURL => {
-      try {
-        const characterPromises = charactersURL.map(async _URL => {
-          const response = await axios.get(_URL);
-          return {...response.data};
-        });
+  const getRickandMortyCharacters = async charactersURL => {
+    try {
+      const characterPromises = charactersURL.map(async _URL => {
+        const response = await axios.get(_URL);
+        return {...response.data};
+      });
 
-        const allCharacters = await Promise.all(characterPromises);
-        const charactersDetails = allCharacters.map(character => ({
-          id: character?.id,
-          name: character?.name,
-          status: character?.status,
-          species: character?.species,
-          location: character?.location?.name,
-          image: character?.image,
-          charURL: character?.url,
-        }));
-        // console.log('🍎', charactersDetails);
-        setCharactersData(prevData => ({
-          ...prevData,
-          [activeEpisode]: charactersDetails,
-        }));
-      } catch (error) {
-        console.log('Charaters:', error);
-      }
-    },
-    [activeEpisode],
-  );
+      const allCharacters = await Promise.all(characterPromises);
+      const charactersDetails = allCharacters.map(character => ({
+        id: character?.id,
+        name: character?.name,
+        status: character?.status,
+        species: character?.species,
+        location: character?.location?.name,
+        image: character?.image,
+      }));
 
-  const handlePreviousEpisode = useCallback(() => {
-    setActiveEpisode(prevEpisode =>
-      Math.max(prevEpisode - 1, startEpisodeNumber),
-    );
-  }, [startEpisodeNumber]);
-
-  const handleNextEpisode = useCallback(() => {
-    setActiveEpisode(prevEpisode =>
-      Math.min(prevEpisode + 1, endEpisodeNumber),
-    );
-  }, [endEpisodeNumber]);
-
+      setCharactersData(charactersDetails);
+      // console.log('adsflkajdsf-----', charactersData);
+    } catch (error) {
+      console.log('Charaters:', error);
+    }
+  };
   const {episode, name: episodeName} = episodeInfo;
-
+  // console.log('chara🌈', charactersData);
   return (
     <View style={styles.container}>
       <Text style={styles.headText}>RickandMorty Story</Text>
@@ -87,7 +66,9 @@ const RickandMorty = () => {
             activeEpisode > startEpisodeNumber ? COLORS.primary : COLORS.gray
           }
           onPress={
-            activeEpisode > startEpisodeNumber ? handlePreviousEpisode : null
+            activeEpisode > startEpisodeNumber
+              ? () => setActiveEpisode(previous => previous - 1)
+              : null
           }
         />
 
@@ -105,20 +86,22 @@ const RickandMorty = () => {
           color={
             activeEpisode <= endEpisodeNumber ? COLORS.primary : COLORS.gray
           }
-          onPress={activeEpisode <= endEpisodeNumber ? handleNextEpisode : null}
+          onPress={
+            activeEpisode <= endEpisodeNumber
+              ? () => setActiveEpisode(previous => previous + 1)
+              : null
+          }
         />
       </View>
       <FlatList
-        data={charactersData[activeEpisode]}
+        data={charactersData}
         renderItem={({item}) => <RMCard character={item} />}
         keyExtractor={item => item.id}
         showsVerticalScrollIndicator={false}
       />
     </View>
   );
-};
-
-export default React.memo(RickandMorty);
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -140,15 +123,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   showSeasonTextContainer: {
-    width: SIZES.RW(80),
-    alignItems: 'center',
-    // justifyContent: 'center',
+    minHeight: SIZES.RH(5),
+    justifyContent: 'center',
     paddingHorizontal: SIZES.padding,
+    flexWrap: 'wrap',
   },
   showSeasonText: {
-    flexWrap: 'wrap',
-    ...FONTS.body4.fontSize,
+    ...FONTS.body4,
     color: COLORS.title,
-    textAlign: 'center',
   },
 });
