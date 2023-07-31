@@ -6,7 +6,9 @@ import {
 
 export const COLORS = {
   // base colors
-  primary: '#3884FC',
+  primary: '#166FFF',
+  secondary: '#9FBFF4',
+  light: '#E5EFFF',
   bgColor: '#fcfdff',
   // text colors
   title: '#161012',

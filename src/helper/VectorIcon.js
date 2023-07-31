@@ -2,6 +2,7 @@ import {TouchableOpacity} from 'react-native';
 import React from 'react';
 import FontAwesome from 'react-native-vector-icons/dist/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/dist/FontAwesome5';
+import FontAwesome6 from 'react-native-vector-icons/dist/FontAwesome6';
 import MaterialCommunityIcons from 'react-native-vector-icons/dist/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/dist/MaterialIcons';
 import Feather from 'react-native-vector-icons/dist/Feather';
@@ -50,6 +51,9 @@ const VectorIcon = ({name, size, color, type, onPress, style, ...props}) => {
       break;
     case 'SimpleLineIcons':
       IconComponent = SimpleLineIcons;
+      break;
+    case 'FontAwesome6':
+      IconComponent = FontAwesome6;
       break;
     default:
       IconComponent = MaterialIcons;
